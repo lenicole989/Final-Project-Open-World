@@ -1,5 +1,5 @@
-# Title
-Shopping at IKEA with Blahaj
+# Shopping at IKEA with Blahaj
+
 
 ## Repository
 https://github.com/lenicole989/Final-Project-Open-World.git
