@@ -5,7 +5,7 @@ Shopping at IKEA with Blahaj
 https://github.com/lenicole989/Final-Project-Open-World.git
 
 ## Description
-A open-world based on IKEA and will include some furniture, stuffed animals, and 
+An open-world based on IKEA and will include some furniture, stuffed animals, and 
 shopping features. This project explores environmental storytelling using Blahaj as the
 main character to find and interact with items, turning a familiar space into a digital
 experience.
