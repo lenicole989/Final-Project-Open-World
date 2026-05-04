@@ -1,7 +1,7 @@
 import pygame
+import sys
 import random
 import math
-import sys
 
 blue = (0, 81, 186)
 
@@ -12,17 +12,28 @@ class character:
         self.size = [30, 20]
         self.speed = 5
 
-clock = pygame.time.Clock()
-player_position = [400, 250]
 
 
 def main():
     pygame.init()
     pygame.display.set_caption("Shopping at 1KEA")
-    clock = pygame.time.Clock()
-    dt = 0 
     resolution = (0,0)
     screen = pygame.display.set_mode(resolution, pygame.FULLSCREEN)
+    width, height = screen.get_size()
+    clock = pygame.time.Clock()
+    dt = 0
+    player = character(width//2, height//2)
+    # Event Loop
+    running =True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    running = False
+
+
 
 
 
