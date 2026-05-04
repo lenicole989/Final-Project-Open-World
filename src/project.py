@@ -8,10 +8,9 @@ yellow = (255, 218, 0)
 
 class character:
     def __init__(self, x, y):
-        # Store coordinates
-        self.pos = [x, y]
+        self.pos = pygame.Vector2(x, y)
         self.size = [30, 20]
-        self.speed = 5
+        self.speed = 20
 
     # Defining how user moves using keys
     def move(self, dt):
@@ -26,10 +25,14 @@ class character:
             self.pos.x += self.speed * dt
     
     def draw(self, screen):
-        pygame.draw.rect(screen, yellow, (self.pos.x, self.pos.y, self.size[0]))
+        pygame.draw.rect(screen, yellow, (self.pos.x, self.pos.y, self.size[0], self.size[1]))
+
+    def check_bounds(self, screen_w, screen_h):
+        if self.pos.x < 0: self.pos.x = 0
+        if self.pos.x > screen_w - self.size[0]: self.pos.x = screen_w - self.size[0]
+        if self.pos.y < 0: self.pos.y = 0
+        if self.pos.y > screen_h - self.size[1]: self.pos.y = screen_h - self.size[1]
         
-
-
 
 
 def main():
@@ -58,6 +61,7 @@ def main():
         player.draw(screen)
         pygame.display.flip()
 pygame.quit()
+sys.exit()
 
 
 
