@@ -11,13 +11,19 @@ class character:
         self.pos = [x, y]
         self.size = [30, 20]
         self.speed = 5
-        screen = pygame.display.set_mode((800, 500))
-        pygame.display.set_caption("Shopping at 1KEA")
 
 clock = pygame.time.Clock()
 player_position = [400, 250]
 
-while True:
+
+def main():
+    pygame.init()
+    pygame.display.set_caption("Shopping at 1KEA")
+    clock = pygame.time.Clock()
+    dt = 0 
+    resolution = (0,0)
+    screen = pygame.display.set_mode(resolution, pygame.FULLSCREEN)
+
 
 
 
