@@ -121,14 +121,22 @@ def main():
         ]
     # Invisible walls for interior
     obstacles_int = [
-        shelf(50, 0, 1450, 237),
+        shelf(0,0,50,150),
+        shelf(45, 0, 1450, 237),
         shelf(90, 120, 93, 415),
+        shelf(90, 620, 93, 305),
+        shelf(289, 620, 93, 305),
         shelf(289, 120, 93, 415),
         shelf(488, 120, 93, 415),
         shelf(687, 120, 93, 415),
         shelf(930, 120, 111, 415),
         shelf(1149, 120, 111, 415),
-        shelf(1348, 120, 130, 415),
+        shelf(1348, 119, 130, 415),
+        shelf(1393, 595, 30, 266),
+        shelf(1430, 720, 50, 100),
+        shelf(1435, 840, 30, 120),
+        shelf(630, 800, 200, 100),
+        shelf(1120, 690, 255, 80)
     ]
 
     # Event Loop
@@ -154,7 +162,7 @@ def main():
             player_rect = pygame.Rect(player.pos.x, player.pos.y, player.size[0], player.size[1])
             if player_rect.colliderect(door_to_int):
                 current_scene = interior
-                player.pos = pygame.Vector2(width//2, height-100)
+                player.pos = pygame.Vector2(width//3, height-200)
                 
         elif current_scene == interior:
             player.move(dt, obstacles_int)
@@ -167,7 +175,7 @@ def main():
             player_rect = pygame.Rect(player.pos.x, player.pos.y, player.size[0], player.size[1])
             if player_rect.colliderect(door_to_ext):
                 current_scene = exterior
-                player.pos =pygame.Vector2(width//2, height//2 - 100)
+                player.pos = pygame.Vector2(width//2, height//2)
             
         player.draw(screen)
         pygame.display.flip()
