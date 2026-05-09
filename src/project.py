@@ -1,5 +1,7 @@
+from PIL import Image
 import pygame
 import sys
+import os
 
 blue = (0, 81, 186)
 yellow = (255, 218, 0)
@@ -14,7 +16,7 @@ class character:
         self.speed = 200
 
     # Defining how user moves using keys
-    def move(self, dt, shelves):
+    def move(self, dt, obstacles):
         seconds = dt / 1000
         keys = pygame.key.get_pressed()
 
@@ -36,11 +38,11 @@ class character:
             self.pos.x += self.speed * seconds
         
         player_rect = pygame.Rect(self.pos.x, self.pos.y, self.size[0], self.size[1])
-        for shelf in shelves:
-            if player_rect.colliderect(shelf.rect):
+        for obj in obstacles:
+            if player_rect.colliderect(obj.rect):
                 self.pos.x = old_x
-        for shelf in shelves:
-            if player_rect.colliderect(shelf.rect):
+        for obj in obstacles:
+            if player_rect.colliderect(obj.rect):
                 self.pos.y = old_y
     
     
@@ -54,12 +56,12 @@ class character:
 
 
 class shelf:
-    def __init__(self, x, y, width, height):
+    def __init__(self, x, y, width, height, color=yellow):
         self.rect = pygame.Rect(x, y, width, height)
+        self.color = color
 
     def draw(self, screen):
         pygame.draw.rect(screen, brown, self.rect)
-
 
 
 
@@ -71,38 +73,64 @@ def main():
     screen = pygame.display.set_mode(resolution, pygame.FULLSCREEN)
     width, height = screen.get_size()
     clock = pygame.time.Clock()
-    dt = 0
+    base_path = os.path.dirname(os.path.abspath(__file__))
 
+    def load(filename):
+        path = os.path.join(base_path, filename)
+        pil_img = Image.open(path).convert("RGB")
+        py_img = pygame.image.fromstring(pil_img.tobytes(), pil_img.size, pil_img.mode)
+        return pygame.transform.scale(py_img, (width, height))
+    
     # Import background assets with furniture
+    try:
+        bg_ext = load("exterior.png")
+        bg_int = load("interior.png")
+    except Exception as e:
+        print(f"Error loading images: {e}")
+        bg_ext =pygame.Surface((width, height))
+        bg_ext.fill(blue)
 
-
-    bg_int = pygame.image.load("interior.png")
-    bg_int = pygame.transform.scale(bg_int, (width, height))
     # Set starting screen as exterior
     current_scene = exterior
-
     player = character(width//2, height//2)
 
     # Door mat trigger
-    door = pygame.Rect(width//2 - 50, height//2 - 100, 100, 50)
+    door_to_int = pygame.Rect(width//2 - 50, height//2 - 100, 100, 50)
+    door_to_ext = pygame.Rect(width//2 - 50, height-50, 100, 50)
 
     #Invisible walls for exterior
-    obstacle = [
+    obstacles_ext = [
         #Building
-        shelf(100, 400, 500,300), 
-        #Sidewalk
-        shelf(100, 330,450,20),
-        #Items
-        shelf(180, 700, 50, 50)
+        shelf(454, 80, 822, 300),
+        shelf(454, 350, 247, 103),
+        shelf(780, 350, 496, 103),
+        shelf(590, 575, 43, 64),
+        shelf(433, 280, 10, 290),
+        shelf(235, 280, 200, 10),
+        shelf(235, 280, 10, 289),
+        shelf(235, 646, 10, 220),
+        shelf(293, 655, 228, 255),
+        shelf(433, 560, 205, 10),
+        shelf(834, 560, 430, 10),
+        shelf(1254, 560, 10, 290),
+        shelf(590, 767, 43, 80),
+        shelf(568, 430, 32, 55),
+        shelf(888, 767, 43, 80),
+        shelf(983, 880, 193, 39),
+        shelf(1037, 767, 43, 80),
         ]
     # Invisible walls for interior
-    shelves = [
-        shelf(150, 200, 50, 150),
-        shelf(400, 250, 150, 40),
-        shelf(400, 400, 150, 40),
-        shelf(650, 250, 150, 40),
-        shelf(650, 400, 150, 40)
+    obstacles_int = [
+        shelf(50, 0, 1450, 237),
+        shelf(90, 120, 93, 415),
+        shelf(289, 120, 93, 415),
+        shelf(488, 120, 93, 415),
+        shelf(687, 120, 93, 415),
+        shelf(930, 120, 111, 415),
+        shelf(1149, 120, 111, 415),
+        shelf(1348, 120, 130, 415),
     ]
+
     # Event Loop
     running =True
     while running:
@@ -115,20 +143,31 @@ def main():
 
         dt = clock.tick(60)
         if current_scene == exterior:
-            player.move(dt, obstacle)
+            player.move(dt, obstacles_ext)
             player.check_bounds(width, height)
             screen.blit(bg_ext, (0,0))
 
+            for obj in obstacles_ext:
+                obj.draw(screen)
+
             # Door triggers entry into interior 
             player_rect = pygame.Rect(player.pos.x, player.pos.y, player.size[0], player.size[1])
-            if player_rect.colliderect(door):
+            if player_rect.colliderect(door_to_int):
                 current_scene = interior
-                player.pos = pygame.Vector2(width//2, height-50)
+                player.pos = pygame.Vector2(width//2, height-100)
                 
         elif current_scene == interior:
-            player.move(dt, shelves)
+            player.move(dt, obstacles_int)
             player.check_bounds(width, height)
             screen.blit(bg_int, (0,0))
+
+            for obj in obstacles_int:
+                obj.draw(screen)
+
+            player_rect = pygame.Rect(player.pos.x, player.pos.y, player.size[0], player.size[1])
+            if player_rect.colliderect(door_to_ext):
+                current_scene = exterior
+                player.pos =pygame.Vector2(width//2, height//2 - 100)
             
         player.draw(screen)
         pygame.display.flip()
