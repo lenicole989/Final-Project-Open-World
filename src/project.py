@@ -154,7 +154,7 @@ def main():
     
     items_in_store = [
         items(200, 840, bag_img, "1KEA bag"),
-        items(1310, 700, bear_img, "Djunkelskog"),
+        items(1310, 700, bear_img, "Djungelskog"),
         items(1270, 210, shark_img, "Blahaj")
     ]
 
