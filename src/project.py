@@ -305,7 +305,7 @@ def main():
 
         icon_list = [
             {"name": "1KEA bag", "img": bag_img},
-            {"name": "Djunkelskog", "img": bear_img},
+            {"name": "Djungelskog", "img": bear_img},
             {"name": "Blahaj", "img": shark_img},
         ]
 
