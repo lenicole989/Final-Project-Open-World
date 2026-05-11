@@ -6,13 +6,14 @@ import os
 blue = (0, 81, 186)
 yellow = (255, 218, 0)
 brown = (101, 67, 33)
+white = (255, 255, 255)
 exterior = "parking lot"
-interior = "marketplace"
+interior = "furniture"
 
 class character:
     def __init__(self, x, y, images):
         self.pos = pygame.Vector2(x, y)
-        self.size = [70, 45]
+        self.size = [75, 45]
         self.images = images
         self.speed = 200
         # Default starting position
@@ -77,7 +78,7 @@ class shelf:
 
 class items:
     def __init__(self, x, y, image, name):
-        self.rect = pygame.Rect(x, y, 50, 50)
+        self.rect = image.get_rect(topleft=(x,y))
         self.image = image
         self.name = name
         self.collected = False
@@ -86,10 +87,11 @@ class items:
         if not self.collected:
             screen.blit(self.image, (self.rect.x, self.rect.y))
 
+
+
 def main():
     pygame.init()
     pygame.display.set_caption("Shopping at 1KEA")
-
     resolution = (0,0)
     screen = pygame.display.set_mode(resolution, pygame.FULLSCREEN)
     width, height = screen.get_size()
@@ -108,9 +110,27 @@ def main():
             return pygame.transform.scale(py_img, size)
         return pygame.transform.scale(py_img, (width, height))
     
-    
-    char_size = (85,60)
 
+
+    # Progress bar to keep track of inventory
+    def progress_bar(inventory_count):
+        bar_x, bar_y = 90, 70
+        max_width = 180
+        height = 30
+        radius = 15
+
+        pygame.draw.rect(screen, white, (bar_x-2, bar_y-2, max_width+4, height+4), 7, border_radius=radius+2)
+        fill_width = (inventory_count / 3) * max_width
+        pygame.draw.rect(screen, blue, (bar_x, bar_y, max_width, height), border_radius=radius)
+        fill_width = (inventory_count / 3) * max_width
+
+        if inventory_count > 0:
+            pygame.draw.rect(screen, yellow, (bar_x, bar_y, fill_width, height), border_radius=radius)
+        pygame.draw.rect(screen, blue, (bar_x, bar_y, max_width, height), 3, border_radius=radius)
+    
+
+
+    char_size = (85,60)
     # Import shark images
     shark_images = {
         "up": load("shark_back.png", alpha=True, size=char_size),
@@ -122,8 +142,12 @@ def main():
     for key in shark_images:
         shark_images[key] = pygame.transform.scale(shark_images[key], char_size)
     
+
+
     # Items list
     inventory = []
+    win_announced = False
+    last_inventory_count = -1
     bag_img = load("itemsbag.png", alpha=True, size=(70,80))
     bear_img = load("itemsbear.png", alpha=True, size=(80,100)) 
     shark_img = load("itemsshark.png", alpha=True, size=(90,80)) 
@@ -133,6 +157,27 @@ def main():
         items(820, 200, bear_img, "Djunkelskog"),
         items(1270, 230, shark_img, "Blahaj")
     ]
+
+    # Import progress bar images
+    try:
+        count_images = [
+            load("0.png", alpha=True, size=(40,20)),
+            load("1.png", alpha=True, size=(40,20)),
+            load("2.png", alpha=True, size=(40,20)),
+            load("3.png", alpha=True, size=(40,20)),
+        ]
+    except Exception as e:
+        print(f"Error loading images: {e}")
+        count_images = [pygame.Surface((60, 30)) for _ in range(4)]
+
+
+    try:
+        collected_img = load("CollectedItems.png", alpha=True, size=(125,25))
+    except Exception as e:
+        print(f"Error loading images: {e}")
+        collected_img = pygame.Surface((125, 25))
+
+
 
     # Import background assets with furniture
     try:
@@ -195,6 +240,8 @@ def main():
         shelf(1120, 690, 255, 80)
     ]
 
+
+
     # Event Loop
     running =True
     while running:
@@ -211,8 +258,8 @@ def main():
             player.check_bounds(width, height)
             screen.blit(bg_ext, (0,0))
 
-            for obj in obstacles_ext:
-               obj.draw(screen)
+            #for obj in obstacles_ext:
+             #  obj.draw(screen)
 
             # Door triggers entry into interior 
             player_rect = pygame.Rect(player.pos.x, player.pos.y, player.size[0], player.size[1])
@@ -225,8 +272,8 @@ def main():
             player.check_bounds(width, height)
             screen.blit(bg_int, (0,0))
 
-            for obj in obstacles_int:
-                obj.draw(screen)
+            #for obj in obstacles_int:
+             #   obj.draw(screen)
 
             player_rect = pygame.Rect(player.pos.x, player.pos.y, player.size[0], player.size[1])
             
@@ -246,6 +293,42 @@ def main():
                 player.pos = pygame.Vector2(width//2, height//2)
             
         player.draw(screen)
+        current_count_image = count_images[len(inventory)]
+        progress_bar(len(inventory))
+
+        icon_x = 280
+        icon_y = 65
+        spacing = 50
+
+        icon_list = [
+            {"name": "1KEA bag", "img": bag_img},
+            {"name": "Djunkelskog", "img": bear_img},
+            {"name": "Blahaj", "img": shark_img},
+        ]
+
+        screen.blit(collected_img, (287,35))
+
+        for i, item_info in enumerate(icon_list):
+            mini_img = pygame.transform.scale(item_info["img"], (40, 40))
+            if item_info["name"] in inventory:
+                screen.blit(mini_img, (icon_x + (i * spacing), icon_y))
+            else:
+                mini_img.fill((50,50,50), special_flags=pygame.BLEND_RGB_MULT)
+                screen.blit(mini_img, (icon_x + (i * spacing), icon_y))
+
+
+        screen.blit(current_count_image, (160,75))
+        
+        # Track inventory
+        if len(inventory) != last_inventory_count:
+            inventory_text = f"Inventory: {len(inventory)} / 3 items"
+            print(inventory_text)
+            last_inventory_count = len(inventory)
+
+        # Finish collecting all items
+        if len(inventory) == 3 and not win_announced:
+            print("WINNER! All items collected.")
+            win_announced = True
         pygame.display.flip()
     pygame.quit()
     sys.exit()
