@@ -1,4 +1,4 @@
-# Shopping at IKEA with Blahaj
+# Shopping at 1KEA with Blahaj
 
 
 ## Repository
@@ -6,12 +6,12 @@ https://github.com/lenicole989/Final-Project-Open-World.git
 
 ## Description
 An open-world inspired by IKEA and will include some furniture, stuffed animals, and 
-shopping features. This project explores environmental storytelling using Blahaj, the shark plushie from IKEA as the main character to find and interact with items, turning a familiar space into a digital experience.
+shopping features. This project explores environmental storytelling using Blahaj, the shark plushie from 1KEA as the main character to find and interact with items, turning a familiar space into a digital experience.
 
 ## Features
 - Player Controller
 	- When user presses movement keys the Blahaj will move across the screen
-- Add to Cart
+- Add to Inventory
 	- Shopping feature where Blahaj can "pick up" items and will be executed by
     touching the item or pressing a key
 - Camera following

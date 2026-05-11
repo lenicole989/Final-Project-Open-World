@@ -153,9 +153,9 @@ def main():
     shark_img = load("itemsshark.png", alpha=True, size=(90,80)) 
     
     items_in_store = [
-        items(200, 240, bag_img, "1KEA bag"),
-        items(820, 200, bear_img, "Djunkelskog"),
-        items(1270, 230, shark_img, "Blahaj")
+        items(200, 840, bag_img, "1KEA bag"),
+        items(1310, 700, bear_img, "Djunkelskog"),
+        items(1270, 210, shark_img, "Blahaj")
     ]
 
     # Import progress bar images
@@ -171,12 +171,15 @@ def main():
         count_images = [pygame.Surface((60, 30)) for _ in range(4)]
 
 
+    # Collected Items Image
     try:
         collected_img = load("CollectedItems.png", alpha=True, size=(125,25))
     except Exception as e:
         print(f"Error loading images: {e}")
         collected_img = pygame.Surface((125, 25))
 
+    collected_dark = collected_img.copy()
+    collected_dark.fill((150,150,150), special_flags=pygame.BLEND_RGB_MULT)
 
 
     # Import background assets with furniture
@@ -221,16 +224,16 @@ def main():
     obstacles_int = [
         shelf(0,0,100,100),
         shelf(100, 0, 1450, 220),
-        shelf(90, 120, 93, 400),
-        shelf(90, 620, 93, 305),
-        shelf(289, 620, 93, 305),
+        shelf(90, 120, 93, 370),
+        shelf(90, 620, 93, 280),
+        shelf(289, 620, 93, 280),
         
-        shelf(289, 120, 93, 400),
-        shelf(488, 120, 93, 400),
-        shelf(687, 120, 93, 400),
-        shelf(930, 120, 108, 400),
-        shelf(1150, 120, 100, 390),
-        shelf(1375, 119, 135, 390),
+        shelf(289, 120, 93, 370),
+        shelf(488, 120, 93, 370),
+        shelf(687, 120, 93, 370),
+        shelf(930, 120, 108, 370),
+        shelf(1150, 120, 100, 370),
+        shelf(1375, 119, 135, 370),
 
         shelf(1393, 595, 30, 266),
         shelf(1430, 720, 150, 100),
@@ -306,7 +309,10 @@ def main():
             {"name": "Blahaj", "img": shark_img},
         ]
 
-        screen.blit(collected_img, (287,35))
+        # Collected Items 
+        screen.blit(collected_dark, (260, 35))
+        screen.blit(collected_img, (263, 35))
+
 
         for i, item_info in enumerate(icon_list):
             mini_img = pygame.transform.scale(item_info["img"], (40, 40))
